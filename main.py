@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.models import db, User, Profile, Languages, Courses, ProfessionalExperience, Skills, References
+from app.models import db, User, BasicInfo, Contact 
+# Languages, Courses, ProfessionalExperience, Skills, References
 from decouple import config
 
 # Initialize Flask application
