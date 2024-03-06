@@ -1,13 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.models import db, User, Profile, Languages, Courses, ProfessionalExperience, Skills, References
 from decouple import config
-
-
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -24,3 +21,4 @@ migrate = Migrate(app, db)
 
 if __name__ == '__main__':
     app.run(debug=True)
+

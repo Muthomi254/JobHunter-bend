@@ -129,6 +129,3 @@ class References(db.Model, UserMixin):
 
     profile = relationship("Profile", back_populates="references")
 
-# Example usage:
-# engine = create_engine('postgresql://username:password@localhost:5432/database_name')
-# Base.metadata.create_all(engine)
