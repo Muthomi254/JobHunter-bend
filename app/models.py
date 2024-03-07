@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import LargeBinary
 
 db = SQLAlchemy()
 
@@ -37,6 +38,7 @@ class BasicInfo(db.Model):
     nationality = db.Column(db.String(255))
     passport_id = db.Column(db.String(255))
     gender = db.Column(db.String(255))
+    image_data = db.Column(LargeBinary)
 
 class Contact(db.Model):
     __tablename__ = 'contact'
