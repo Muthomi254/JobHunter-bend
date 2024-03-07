@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from decouple import config
 from flask_jwt_extended import JWTManager
 from app.models import db, User, RevokedToken
+from flask_cors import CORS  # Import CORS
+
 
 app = Flask(__name__)
 
@@ -20,13 +22,14 @@ migrate = Migrate(app, db)
 # Register JWT extension with Flask app
 jwt = JWTManager(app)
 
+# Initialize CORS extension
+CORS(app)  # This will allow CORS for all routes. You can customize further if needed.
+
 # importing blueprints
 from app.blueprints.auth_bp import auth_blueprint  # Import auth_blueprint from its file
 
 # Register authentication blueprint with Flask app
 app.register_blueprint(auth_blueprint)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
