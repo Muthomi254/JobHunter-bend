@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash
 from app.models import db, User, RevokedToken
 from sqlalchemy.exc import IntegrityError
 
+
 auth_blueprint = Blueprint('auth', __name__)
 
 from flask import request, jsonify
@@ -86,3 +87,26 @@ def logout():
         # Handle other common errors
         return jsonify({'message': 'An error occurred while logging out', 'error': str(e)}), 500
 
+@auth_blueprint.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.json
+    email = data.get('email')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+
+    if not email:
+        return jsonify({'message': 'Email address is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({'message': 'User with that email address does not exist'}), 404
+
+    if new_password != confirm_password:
+        return jsonify({'message': 'Passwords do not match'}), 400
+
+    # Update the user's password
+    user.password = new_password
+    db.session.commit()
+
+    return jsonify({'message': 'Password reset successfully'}), 200
