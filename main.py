@@ -27,9 +27,16 @@ CORS(app)  # This will allow CORS for all routes. You can customize further if n
 
 # importing blueprints
 from app.blueprints.auth_bp import auth_blueprint  # Import auth_blueprint from its file
+from app.blueprints.basic_info_bp import basic_info_bp
+from app.blueprints.contact_bp import contact_bp
+
 
 # Register authentication blueprint with Flask app
 app.register_blueprint(auth_blueprint)
+app.register_blueprint(basic_info_bp)
+app.register_blueprint(contact_bp)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
