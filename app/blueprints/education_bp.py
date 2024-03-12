@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models import db,User, Education
-from datetime import date
+from datetime import datetime
+
 
 education_bp = Blueprint('education_bp', __name__)
 
@@ -19,19 +20,14 @@ def create_education():
     if current_user_email != user_email:
         return jsonify({'message': 'Unauthorized'}), 401
 
-    # Validate start and end dates
-    start_date = data.get('start_date')
+    # If end date is not provided or is in the future, set it to today's date
     end_date = data.get('end_date')
-
-    if not start_date or not end_date:
-        return jsonify({'message': 'Start date and end date are required'}), 400
-
-    if start_date > end_date:
-        return jsonify({'message': 'End date cannot be before the start date'}), 400
-
-    # If end date is in the future, set it to today's date
-    if end_date > date.today():
-        end_date = date.today()
+    if not end_date:
+        end_date = datetime.today().date()
+    else:
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        if end_date > datetime.today().date():
+            end_date = datetime.today().date()
 
     education = Education(
         user_id=user_id,
@@ -40,7 +36,7 @@ def create_education():
         institution=data.get('institution'),
         city=data.get('city'),
         country=data.get('country'),
-        start_date=start_date,
+        start_date=data.get('start_date'),
         end_date=end_date,
         description=data.get('description')
     )
@@ -48,6 +44,8 @@ def create_education():
     db.session.commit()
 
     return jsonify({'message': 'Education entry created successfully'}), 201
+
+
 
 # Get all education entries for a user
 @education_bp.route('/education', methods=['GET'])
@@ -105,8 +103,9 @@ def get_education(education_id):
 
     return jsonify(education_data), 200
 
+    
 # Update education entry
-@education_bp.route('/education/<int:education_id>', methods=['PUT'])
+@education_bp.route('/education/<int:education_id>', methods=['PATCH', 'PUT'])
 @jwt_required()
 def update_education(education_id):
     current_user_email = get_jwt_identity()
@@ -130,9 +129,15 @@ def update_education(education_id):
     education_entry.end_date = data.get('end_date', education_entry.end_date)
     education_entry.description = data.get('description', education_entry.description)
 
+    # Validate start date and end date
+    if education_entry.start_date > education_entry.end_date:
+        return jsonify({'message': 'Start date cannot be greater than end date'}), 400
+
     db.session.commit()
 
     return jsonify({'message': 'Education entry updated successfully'}), 200
+
+
 
 # Delete education entry
 @education_bp.route('/education/<int:education_id>', methods=['DELETE'])
