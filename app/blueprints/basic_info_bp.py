@@ -4,7 +4,7 @@ from app.models import db, BasicInfo, User
 from sqlalchemy.exc import IntegrityError
 import base64
 import binascii
-
+from sqlalchemy.exc import IntegrityError, ProgrammingError
 
 basic_info_bp = Blueprint('basic_info_bp', __name__)
 
@@ -13,34 +13,39 @@ basic_info_bp = Blueprint('basic_info_bp', __name__)
 @basic_info_bp.route('/basic-info', methods=['POST'])
 @jwt_required()  # Require JWT authentication for creating BasicInfo
 def create_basic_info():
-    data = request.json
-    user_email = get_jwt_identity()  # Get user email from JWT token
-    user = User.query.filter_by(email=user_email).first()
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    # Check if BasicInfo already exists for the user
-    if BasicInfo.query.filter_by(user_id=user.id).first():
-        return jsonify({'message': 'BasicInfo already exists for this user'}), 400
-
     try:
+        data = request.json
+        # Ensure all required fields are present in the request JSON data
+        required_fields = ['first_name', 'last_name', 'job_title', 'date_of_birth', 'nationality', 'passport_id', 'gender', 'image_data']
+        if not all(field in data for field in required_fields):
+            return jsonify({'message': 'Required fields are missing in the request data'}), 400
+
+        user_email = get_jwt_identity()  # Get user email from JWT token
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+
+        # Check if BasicInfo already exists for the user
+        if BasicInfo.query.filter_by(user_id=user.id).first():
+            return jsonify({'message': 'BasicInfo already exists for this user'}), 400
+
         image_data_str = data.get('image_data', '')
         try:
             # Decode base64-encoded image data
             image_data = base64.b64decode(image_data_str)
         except binascii.Error as e:
-            return jsonify({'message': 'Invalid image data', 'error': str(e)}), 400
+            return jsonify({'message': 'Invalid image data: ' + str(e)}), 400
 
         basic_info = BasicInfo(
             user_id=user.id,
             user_email=user.email,
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name'),
-            job_title=data.get('job_title'),
-            date_of_birth=data.get('date_of_birth'),
-            nationality=data.get('nationality'),
-            passport_id=data.get('passport_id'),
-            gender=data.get('gender'),
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            job_title=data['job_title'],
+            date_of_birth=data['date_of_birth'],
+            nationality=data['nationality'],
+            passport_id=data['passport_id'],
+            gender=data['gender'],
             image_data=image_data
         )
         db.session.add(basic_info)
@@ -49,6 +54,9 @@ def create_basic_info():
     except IntegrityError as e:
         db.session.rollback()
         return jsonify({'message': 'An error occurred while creating BasicInfo', 'error': str(e)}), 500
+    except ProgrammingError as e:
+        return jsonify({'message': 'An error occurred while executing the SQL query', 'error': str(e)}), 500
+
 
 
 # Route for updating BasicInfo
