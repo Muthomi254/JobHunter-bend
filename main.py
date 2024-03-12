@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from decouple import config
 from flask_jwt_extended import JWTManager
-from app.models import db, User, RevokedToken
+from app.models import db, User, RevokedToken, LanguageLevel
 from flask_cors import CORS  # Import CORS
 
 
@@ -29,12 +29,22 @@ CORS(app)  # This will allow CORS for all routes. You can customize further if n
 from app.blueprints.auth_bp import auth_blueprint  # Import auth_blueprint from its file
 from app.blueprints.basic_info_bp import basic_info_bp
 from app.blueprints.contact_bp import contact_bp
+from app.blueprints.profile_bp import profile_bp  
+from app.blueprints.languages_bp import languages_bp
+from app.blueprints.education_bp import education_bp  
+
 
 
 # Register authentication blueprint with Flask app
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(basic_info_bp)
 app.register_blueprint(contact_bp)
+app.register_blueprint(profile_bp) 
+app.register_blueprint(languages_bp)
+app.register_blueprint(education_bp)
+
+
+
 
 
 
