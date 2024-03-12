@@ -40,3 +40,21 @@ class Contact(db.Model):
     phone = db.Column(db.String(20))
     address = db.Column(db.String(255))
     social_links = db.Column(db.String(255))
+
+class Profile(db.Model):
+    __tablename__ = 'profile'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+    description = db.Column(db.Text)
+
+
+class Languages(db.Model):
+    __tablename__ = 'languages'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False) 
+    user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+    language = db.Column(db.String(255))
+    additional_info = db.Column(db.Text)
+    language_level = db.Column(db.String(255))
+
