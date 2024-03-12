@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import LargeBinary
+from enum import Enum
 
 db = SQLAlchemy()
 
@@ -49,6 +50,12 @@ class Profile(db.Model):
     description = db.Column(db.Text)
 
 
+class LanguageLevel(Enum):
+    NOVICE = 'Novice'
+    INTERMEDIATE = 'Intermediate'
+    FLUENT = 'Fluent'
+    ADVANCED = 'Advanced'
+
 class Languages(db.Model):
     __tablename__ = 'languages'
     id = db.Column(db.Integer, primary_key=True)
@@ -56,5 +63,50 @@ class Languages(db.Model):
     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
     language = db.Column(db.String(255))
     additional_info = db.Column(db.Text)
-    language_level = db.Column(db.String(255))
+    language_level = db.Column(db.Enum(LanguageLevel), nullable=False)
+
+class Education(db.Model):
+    __tablename__ = 'education'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+    course_title = db.Column(db.String(255))
+    institution = db.Column(db.String(255))
+    city = db.Column(db.String(255))
+    country = db.Column(db.String(255))
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    description = db.Column(db.Text)
+
+# class ProfessionalExperience(db.Model):
+#     __tablename__ = 'professional_experience'
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+#     user_id = db.Column(db.Integer, nullable=False)
+#     employer = db.Column(db.String(255))
+#     job_title = db.Column(db.String(255))
+#     city = db.Column(db.String(255))
+#     country = db.Column(db.String(255))
+#     start_date = db.Column(db.Date)
+#     end_date = db.Column(db.Date)
+#     description = db.Column(db.Text)
+
+# class Skills(db.Model):
+#     __tablename__ = 'skills'
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+#     skill = db.Column(db.String(255))
+#     info = db.Column(db.Text)
+#     skill_level = db.Column(db.String(255))
+
+# class References(db.Model):
+#     __tablename__ = 'references'
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, nullable=False)
+#     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+#     name = db.Column(db.String(255))
+#     job_title = db.Column(db.String(255))
+#     organization = db.Column(db.String(255))
+#     email = db.Column(db.String(255))
+#     phone = db.Column(db.String(20))
 
