@@ -78,26 +78,26 @@ class Education(db.Model):
     end_date = db.Column(db.Date)
     description = db.Column(db.Text)
 
-# class ProfessionalExperience(db.Model):
-#     __tablename__ = 'professional_experience'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
-#     user_id = db.Column(db.Integer, nullable=False)
-#     employer = db.Column(db.String(255))
-#     job_title = db.Column(db.String(255))
-#     city = db.Column(db.String(255))
-#     country = db.Column(db.String(255))
-#     start_date = db.Column(db.Date)
-#     end_date = db.Column(db.Date)
-#     description = db.Column(db.Text)
+class ProfessionalExperience(db.Model):
+    __tablename__ = 'professional_experience'
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    employer = db.Column(db.String(255))
+    job_title = db.Column(db.String(255))
+    city = db.Column(db.String(255))
+    country = db.Column(db.String(255))
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    description = db.Column(db.Text)
 
-# class Skills(db.Model):
-#     __tablename__ = 'skills'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
-#     skill = db.Column(db.String(255))
-#     info = db.Column(db.Text)
-#     skill_level = db.Column(db.String(255))
+class Skills(db.Model): #In the frontend, it will be a drop down with fixed values
+    __tablename__ = 'skills'
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+    skill = db.Column(db.String(255))
+    info = db.Column(db.Text)
+    skill_level = db.Column(db.String(255))
 
 # class References(db.Model):
 #     __tablename__ = 'references'
