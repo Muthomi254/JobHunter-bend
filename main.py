@@ -32,6 +32,9 @@ from app.blueprints.contact_bp import contact_bp
 from app.blueprints.profile_bp import profile_bp  
 from app.blueprints.languages_bp import languages_bp
 from app.blueprints.education_bp import education_bp  
+from app.blueprints.experience_bp import experience_bp 
+from app.blueprints.skills_bp import skills_bp
+
 
 
 
@@ -41,7 +44,9 @@ app.register_blueprint(basic_info_bp)
 app.register_blueprint(contact_bp)
 app.register_blueprint(profile_bp) 
 app.register_blueprint(languages_bp)
-app.register_blueprint(education_bp)
+app.register_blueprint(education_bp) 
+app.register_blueprint(experience_bp)
+app.register_blueprint(skills_bp)
 
 
 
