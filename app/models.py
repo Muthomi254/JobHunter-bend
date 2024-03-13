@@ -99,14 +99,14 @@ class Skills(db.Model): #In the frontend, it will be a drop down with fixed valu
     info = db.Column(db.Text)
     skill_level = db.Column(db.String(255))
 
-# class References(db.Model):
-#     __tablename__ = 'references'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, nullable=False)
-#     user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
-#     name = db.Column(db.String(255))
-#     job_title = db.Column(db.String(255))
-#     organization = db.Column(db.String(255))
-#     email = db.Column(db.String(255))
-#     phone = db.Column(db.String(20))
+class References(db.Model):
+    __tablename__ = 'references'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    user_email = db.Column(db.String(255), db.ForeignKey('user.email'), nullable=False)
+    name = db.Column(db.String(255))
+    job_title = db.Column(db.String(255))
+    organization = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    phone = db.Column(db.String(20))
 
