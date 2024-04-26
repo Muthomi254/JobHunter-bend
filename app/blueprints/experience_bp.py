@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models import db, ProfessionalExperience
+from app.models import db, User, ProfessionalExperience
 
 experience_bp = Blueprint('experience_bp', __name__)
 
@@ -8,32 +8,42 @@ experience_bp = Blueprint('experience_bp', __name__)
 @experience_bp.route('/experience', methods=['POST'])
 @jwt_required()
 def create_experience():
-    current_user_email = get_jwt_identity()
+    try:
+        # Get user email from JWT token
+        user_email = get_jwt_identity()
+        
+        # Retrieve user based on email
+        user = User.query.filter_by(email=user_email).first()
+        
+        # Check if user exists
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
 
-    data = request.json
+        data = request.json
+        print(data)
 
-    user_id = data.get('user_id')
-    user_email = data.get('user_email')
+     
 
-    # Check if the provided user ID and email match the current user
-    if current_user_email != user_email:
-        return jsonify({'message': 'Unauthorized'}), 401
+        experience = ProfessionalExperience(
+            user_email=user_email,
+            user_id=user.id,
+            employer=data.get('employer'),
+            job_title=data.get('job_title'),
+            city=data.get('city'),
+            country=data.get('country'),
+            start_date=data.get('start_date'),
+            end_date=data.get('end_date'),
+            description=data.get('description')
+        )
+        db.session.add(experience)
+        db.session.commit()
 
-    experience = ProfessionalExperience(
-        user_email=current_user_email,
-        user_id=user_id,
-        employer=data.get('employer'),
-        job_title=data.get('job_title'),
-        city=data.get('city'),
-        country=data.get('country'),
-        start_date=data.get('start_date'),
-        end_date=data.get('end_date'),
-        description=data.get('description')
-    )
-    db.session.add(experience)
-    db.session.commit()
+        return jsonify({'message': 'ProfessionalExperience entry created successfully'}), 201
 
-    return jsonify({'message': 'ProfessionalExperience entry created successfully'}), 201
+    except Exception as e:
+        print("An error occurred:", str(e))
+        return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
+
 
 # Get all experience entries for a user
 @experience_bp.route('/experience', methods=['GET'])
