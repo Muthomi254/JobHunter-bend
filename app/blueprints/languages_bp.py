@@ -26,9 +26,6 @@ def create_language():
         additional_info = data.get('additional_info')
         language_level = data.get('language_level')
 
-        # Convert language level to uppercase
-        language_level = language_level.upper()
-        print("Language Level:", language_level)  # Add this line for debugging
 
         if not language:
             return jsonify({'message': 'Language is required'}), 400
