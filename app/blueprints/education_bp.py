@@ -6,61 +6,56 @@ from datetime import datetime
 
 education_bp = Blueprint('education_bp', __name__)
 
-
 # Create education entry
 @education_bp.route('/education', methods=['POST'])
-@jwt_required()
+@jwt_required()  # Require JWT authentication for creating Education
 def create_education():
-    # Get user email from JWT token
-    user_email = get_jwt_identity()
+    try:
+        # Get user email from JWT token
+        user_email = get_jwt_identity()
+        
+        # Retrieve user based on email
+        user = User.query.filter_by(email=user_email).first()
+        
+        # Check if user exists
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
 
-    # Find the user in the database
-    user = User.query.filter_by(email=user_email).first()
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
+        # Proceed with creating education entry
+        
+        data = request.json
+        print(data)
+        user_id = user.id  # Use the user ID from the retrieved user
 
-    data = request.json
-    print("Request JSON:", data)
-    
-    # Extract education entry data from request
-    course_title = data.get('course_title')
-    institution = data.get('institution')
-    city = data.get('city')
-    country = data.get('country')
-    start_date = data.get('start_date')
-    end_date = data.get('end_date')
-    description = data.get('description')
-
-    # Validate data, ensure required fields are present
-    if not (course_title and institution and city and country and start_date ):
-        return jsonify({'message': 'Missing required fields'}), 400
-
-    # If end date is not provided or is in the future, set it to today's date
-    if not end_date:
-        end_date = datetime.today().date()
-    else:
-        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-        if end_date > datetime.today().date():
+        # If end date is not provided or is in the future, set it to today's date
+        end_date = data.get('end_date')
+        if not end_date:
             end_date = datetime.today().date()
+        else:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            if end_date > datetime.today().date():
+                end_date = datetime.today().date()
 
-    # Create the education entry
-    education = Education(
-        user_id=user.id,  # Use the user's ID from the database
-        user_email=user_email,
-        course_title=course_title,
-        institution=institution,
-        city=city,
-        country=country,
-        start_date=start_date,
-        end_date=end_date,
-        description=description
-    )
+        education = Education(
+            user_id=user_id,
+            user_email=user_email,
+            course_title=data.get('course_title'),
+            institution=data.get('institution'),
+            city=data.get('city'),
+            country=data.get('country'),
+            start_date=data.get('start_date'),
+            end_date=end_date,
+            description=data.get('description')
+        )
+        db.session.add(education)
+        db.session.commit()
 
-    # Add to the database session and commit
-    db.session.add(education)
-    db.session.commit()
+        return jsonify({'message': 'Education entry created successfully'}), 201
+    except Exception as e:
+        # Handle exceptions
+        return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
 
-    return jsonify({'message': 'Education entry created successfully'}), 201
+
 
 
 
@@ -149,7 +144,7 @@ def update_education(education_id):
 
     # Validate start date and end date
     if education_entry.start_date > education_entry.end_date:
-        return jsonify({'message': 'Start date cannot be greater than end date'}), 400
+        return jsonify(print({'message': 'Start date cannot be greater than end date'})), 400
 
     db.session.commit()
 
