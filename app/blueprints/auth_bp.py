@@ -11,11 +11,16 @@ auth_blueprint = Blueprint('auth', __name__)
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    if not data or 'email' not in data or 'password' not in data:
-        return jsonify({'message': 'Email and password are required'}), 400
+    print('Data received:', data)  # Print data received
+    if not data or 'email' not in data or 'password' not in data or 'confirm_password' not in data:
+        return jsonify({'message': 'Email, password, and confirm password are required'}), 400
 
     email = data['email']
     password = data['password']
+    confirm_password = data['confirm_password']
+
+    if password != confirm_password:
+        return jsonify({'message': 'Password and confirm password do not match'}), 400
 
     if User.query.filter_by(email=email).first():
         return jsonify({'message': 'Email already exists'}), 400
@@ -26,7 +31,6 @@ def register():
     db.session.commit()
 
     return jsonify({'message': 'User registered successfully'}), 201
-
 @auth_blueprint.route('/forgot-password', methods=['POST'])
 def forgot_password():
     data = request.json
