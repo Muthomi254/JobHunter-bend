@@ -9,38 +9,46 @@ languages_bp = Blueprint('languages_bp', __name__)
 @languages_bp.route('/languages', methods=['POST'])
 @jwt_required()
 def create_language():
-    current_user_email = get_jwt_identity()
+    try:
+        # Get user email from JWT token
+        user_email = get_jwt_identity()
+        
+        # Retrieve user based on email
+        user = User.query.filter_by(email=user_email).first()
+        
+        # Check if user exists
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
 
-    data = request.json
-    user_id = data.get('user_id')
-    user_email = data.get('user_email')
-    language = data.get('language')
-    additional_info = data.get('additional_info')
-    language_level = data.get('language_level')
+        data = request.json
+        print(data)
+        language = data.get('language')
+        additional_info = data.get('additional_info')
+        language_level = data.get('language_level')
 
-    if not user_id or not user_email or not language:
-        return jsonify({'message': 'User ID, email, and language are required'}), 400
+        # Convert language level to uppercase
+        language_level = language_level.upper()
+        print("Language Level:", language_level)  # Add this line for debugging
 
-    # Check if user id and email match the current user
-    if current_user_email != user_email:
-        return jsonify({'message': 'Unauthorized'}), 401
+        if not language:
+            return jsonify({'message': 'Language is required'}), 400
 
-    # Check if user id and email exist in the database
-    user = User.query.filter_by(id=user_id, email=user_email).first()
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
+        new_language = Languages(
+            user_id=user.id,  # Use user.id instead of user_id from request
+            user_email=user_email,
+            language=language,
+            additional_info=additional_info,
+            language_level=language_level
+        )
+        db.session.add(new_language)
+        db.session.commit()
 
-    new_language = Languages(
-        user_id=user_id,
-        user_email=user_email,
-        language=language,
-        additional_info=additional_info,
-        language_level=language_level
-    )
-    db.session.add(new_language)
-    db.session.commit()
+        return jsonify({'message': 'Language created successfully'}), 201
+    except Exception as e:
+        print("An error occurred:", e)
+        return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
 
-    return jsonify({'message': 'Language created successfully'}), 201
+
 
 # Get all languages for a user
 @languages_bp.route('/languages', methods=['GET'])
@@ -129,3 +137,10 @@ def delete_language(language_id):
     db.session.commit()
 
     return jsonify({'message': 'Language deleted successfully'}), 200
+
+
+# Get all language levels
+@languages_bp.route('/language-levels', methods=['GET'])
+def get_language_levels():
+    language_levels = [level.value for level in LanguageLevel]
+    return jsonify(language_levels), 200
