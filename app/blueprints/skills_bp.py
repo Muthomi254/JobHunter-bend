@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models import db, Skills
+from app.models import db,User, Skills
 
 skills_bp = Blueprint('skills_bp', __name__)
 
@@ -8,25 +8,36 @@ skills_bp = Blueprint('skills_bp', __name__)
 @skills_bp.route('/skills', methods=['POST'])
 @jwt_required()
 def create_skill():
-    current_user_email = get_jwt_identity()
-    data = request.json
+    try:
+        current_user_email = get_jwt_identity()
 
-    user_email = data.get('user_email')
-    skill = data.get('skill')
-    info = data.get('info')
-    skill_level = data.get('skill_level')
+        # Retrieve user based on email
+        user = User.query.filter_by(email=current_user_email).first()
+        
+        # Check if user exists
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
 
-    if not user_email or not skill:
-        return jsonify({'message': 'User email and skill are required'}), 400
+        data = request.json
+        print(data)
+        user_email = current_user_email  # Using current user's email
+        skill = data.get('skill')
+        info = data.get('info')
+        skill_level = data.get('skill_level')
 
-    if current_user_email != user_email:
-        return jsonify({'message': 'Unauthorized'}), 401
+        if not skill:
+            return jsonify({'message': 'Skill is required'}), 400
 
-    new_skill = Skills(user_email=user_email, skill=skill, info=info, skill_level=skill_level)
-    db.session.add(new_skill)
-    db.session.commit()
+        new_skill = Skills(user_email=user_email, skill=skill, info=info, skill_level=skill_level)
+        db.session.add(new_skill)
+        db.session.commit()
 
-    return jsonify({'message': 'Skill created successfully'}), 201
+        return jsonify({'message': 'Skill created successfully'}), 201
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': str(e)}), 500
+
 
 # Fetch all skills for the current user
 @skills_bp.route('/skills', methods=['GET'])
