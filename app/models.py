@@ -30,6 +30,7 @@ class BasicInfo(db.Model):
     nationality = db.Column(db.String(255))
     passport_id = db.Column(db.String(255))
     gender = db.Column(db.String(255))
+    cv_name = db.Column(db.String(255))
     image_data = db.Column(LargeBinary)
 
 class Contact(db.Model):
@@ -40,6 +41,7 @@ class Contact(db.Model):
     cv_email = db.Column(db.String(255))
     phone = db.Column(db.String(20))
     address = db.Column(db.String(255))
+    platform_name = db.Column(db.String(100))  # Add platform_name column
     social_links = db.Column(db.String(255))
 
 class Profile(db.Model):
