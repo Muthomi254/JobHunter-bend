@@ -14,7 +14,7 @@ basic_info_bp = Blueprint('basic_info_bp', __name__)
 def create_basic_info():
     try:
         data = request.json
-        print("Received data:", data)  # Print received data
+        # print("Received data:", data)  # Print received data
         # Ensure all required fields are present in the request JSON data
         required_fields = ['first_name', 'last_name', 'job_title', 'date_of_birth', 'nationality', 'passport_id', 'gender', 'image_data']
         if not all(field in data for field in required_fields):
@@ -58,7 +58,7 @@ def create_basic_info():
     except IntegrityError as e:
         db.session.rollback()
         error_message = 'An error occurred while creating BasicInfo: {}'.format(str(e))
-        logging.error(error_message)  # Log the error
+        print("Error message:",e)  
         return jsonify({'message': error_message}), 500
     except ProgrammingError as e:
         error_message = 'An error occurred while executing the SQL query: {}'.format(str(e))
