@@ -16,7 +16,7 @@ def create_basic_info():
         data = request.json
         # print("Received data:", data)  # Print received data
         # Ensure all required fields are present in the request JSON data
-        required_fields = ['first_name', 'last_name', 'job_title', 'date_of_birth', 'nationality', 'passport_id', 'gender', 'image_data']
+        required_fields = ['first_name', 'last_name', 'job_title', 'date_of_birth', 'nationality', 'passport_id', 'gender', 'image_data', 'cv_name']  # Added cv_name
         if not all(field in data for field in required_fields):
             return jsonify({'message': 'Required fields are missing in the request data'}), 400
 
@@ -50,6 +50,7 @@ def create_basic_info():
             nationality=data['nationality'],
             passport_id=data['passport_id'],
             gender=data['gender'],
+            cv_name=data['cv_name'],  # Add cv_name field
             image_data=image_data
         )
         db.session.add(basic_info)
@@ -73,6 +74,7 @@ def create_basic_info():
 def update_basic_info():
     try:
         data = request.json
+        print(data)
         image_data_str = data.get('image_data', '')
         try:
             # Decode base64-encoded image data
@@ -80,7 +82,6 @@ def update_basic_info():
         except binascii.Error as e:
             return jsonify({'message': 'Invalid image data: ' + str(e)}), 400
 
-        print('Decoded image data:', image_data)  # Log the decoded image data
 
         user_email = get_jwt_identity()
 
@@ -101,6 +102,8 @@ def update_basic_info():
         basic_info.nationality = data.get('nationality', basic_info.nationality)
         basic_info.passport_id = data.get('passport_id', basic_info.passport_id)
         basic_info.gender = data.get('gender', basic_info.gender)
+        basic_info.cv_name = data.get('cv_name', basic_info.cv_name)  # Add cv_name field
+
 
         if image_data:
             # Assign the decoded image data to the basic_info object
@@ -142,6 +145,7 @@ def fetch_basic_info(basic_info_id):
         'nationality': basic_info.nationality,
         'passport_id': basic_info.passport_id,
         'gender': basic_info.gender,
+        'cv_name': basic_info.cv_name,  # Add cv_name field
         'image_data': image_data_base64
     }), 200
 
@@ -170,5 +174,6 @@ def fetch_basic_info_by_email():
         'nationality': basic_info.nationality,
         'passport_id': basic_info.passport_id,
         'gender': basic_info.gender,
+        'cv_name': basic_info.cv_name,  # Add cv_name field
         'image_data': image_data_base64
     }), 200
