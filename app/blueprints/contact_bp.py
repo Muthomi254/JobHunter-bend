@@ -51,6 +51,7 @@ def create_contact():
 def update_contact(contact_id):
     # Extract data from request JSON
     data = request.json
+    print(data)
     user_email = get_jwt_identity()
     user = User.query.filter_by(email=user_email).first()
     if not user:
@@ -65,17 +66,22 @@ def update_contact(contact_id):
         if contact.user_id != user.id:
             return jsonify({'message': 'Unauthorized'}), 401
 
-        platforms = [key for key in data if key.startswith('platform_name')]
-        social_links = [data[f'social_links{platform.split("platform_name")[1]}'] for platform in platforms]
+        # Extract platform names and social links separately
+        platforms = [platform_data['platform_name'] for platform_data in data.get('social_media', [])]
+        social_links = [platform_data['social_links'] for platform_data in data.get('social_media', [])]
+
+        # Concatenate all platform names into a single string
+        platform_name = ','.join(platforms)
+
+        # Concatenate all social links into a single string
+        social_links_str = ','.join(social_links)
 
         # Update the contact fields
         contact.cv_email = data.get('cv_email', contact.cv_email)
         contact.phone = data.get('phone', contact.phone)
         contact.address = data.get('address', contact.address)
-        
-        for platform, link in zip(platforms, social_links):
-            setattr(contact, 'platform_name', platform.split('platform_name')[1])
-            setattr(contact, 'social_links', link)
+        contact.platform_name = platform_name
+        contact.social_links = social_links_str
 
         db.session.commit()
         return jsonify({'message': 'Contact updated successfully'}), 200
@@ -107,7 +113,7 @@ def get_contact(contact_id):
         'social_links': contact.social_links
     }
 
-    print(contact_data)
+    # print(contact_data)
 
     return jsonify(contact_data), 200
 
@@ -137,7 +143,7 @@ def get_contacts():
             'user_email': contact.user_email
         }
         contacts_data.append(contact_data)
-        print(contact_data)
+        # print(contact_data)
 
     return jsonify(contacts_data), 200
 
