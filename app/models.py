@@ -44,6 +44,7 @@ class Contact(db.Model):
     platform_name = db.Column(db.String(100))  # Add platform_name column
     social_links = db.Column(db.String(255))
 
+
 class Profile(db.Model):
     __tablename__ = 'profile'
     id = db.Column(db.Integer, primary_key=True)
