@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from decouple import config
@@ -10,7 +11,7 @@ from flask_cors import CORS  # Import CORS
 app = Flask(__name__)
 
 # Configure database URI from environment variable
-app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')  # cv_app database link jdbc:postgresql://localhost:5432/postgres
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = config('JWT_SECRET_KEY')  # Secret key for JWT
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 24 * 3600  # Set expiration time to 1 day (24 hours) in seconds
