@@ -177,3 +177,156 @@ def fetch_basic_info_by_email():
         'cv_name': basic_info.cv_name,  # Add cv_name field
         'image_data': image_data_base64
     }), 200
+
+
+# from flask import Blueprint, request, jsonify
+# from flask_jwt_extended import jwt_required, get_jwt_identity
+# from app.models import db, BasicInfo, User
+# import base64
+# import binascii
+# from sqlalchemy.exc import IntegrityError, ProgrammingError
+# from flask_restful import Resource
+
+# basic_info_bp = Blueprint('basic_info_bp', __name__)
+
+# class BasicInfo(Resource):
+#     @jwt_required()
+#     def post(self):
+#         try:
+#             data = request.get_json()
+
+#             required_fields = ['first_name', 'last_name', 'job_title', 'date_of_birth', 'nationality', 'passport_id', 'gender', 'image_data', 'cv_name']
+#             if not all(field in data for field in required_fields):
+#                 return {'message': 'Required fields are missing in the request data'}, 400
+
+#             user_email = get_jwt_identity()  
+#             user = User.query.filter_by(email=user_email).first()
+#             if not user:
+#                 return {'message': 'User not found'}, 404
+
+#             if BasicInfo.query.filter_by(user_id=user.id).first():
+#                 return {'message': 'BasicInfo already exists for this user'}, 400
+
+#             image_data_str = data.get('image_data', '')  
+#             try:
+#                 image_data = base64.b64decode(image_data_str)
+#             except binascii.Error as e:
+#                 return {'message': 'Invalid image data: ' + str(e)}, 400
+
+
+#             basic_info = BasicInfo(
+#                 user_id=user.id,
+#                 user_email=user.email,
+#                 first_name=data['first_name'],
+#                 last_name=data['last_name'],
+#                 job_title=data['job_title'],
+#                 date_of_birth=data['date_of_birth'],
+#                 nationality=data['nationality'],
+#                 passport_id=data['passport_id'],
+#                 gender=data['gender'],
+#                 cv_name=data['cv_name'],
+#                 image_data=image_data
+#             )
+#             db.session.add(basic_info)
+#             db.session.commit()
+#             return {'message': 'BasicInfo created successfully'}, 201
+#         except IntegrityError as e:
+#             db.session.rollback()
+#             return {'message': 'An error occurred while creating BasicInfo: {}'.format(str(e))}, 500
+#         except ProgrammingError as e:
+#             return {'message': 'An error occurred while executing the SQL query: {}'.format(str(e))}, 500
+
+#     @jwt_required()  
+#     def patch(self):
+#         try:
+#             data = request.get_json()
+#             image_data_str = data.get('image_data', '')
+#             try:
+#                 image_data = base64.b64decode(image_data_str)
+#             except binascii.Error as e:
+#                 return {'message': 'Invalid image data: ' + str(e)}, 400
+
+
+#             user_email = get_jwt_identity()
+
+#             basic_info = BasicInfo.query.filter_by(user_email=user_email).first()
+#             if not basic_info:
+#                 return {'message': 'BasicInfo not found'}, 404
+
+#             required_fields = ['first_name', 'last_name', 'job_title', 'date_of_birth', 'nationality', 'passport_id', 'gender']
+#             if not all(field in data for field in required_fields):
+#                 return {'message': 'Required fields are missing in the request data'}, 400
+
+#             basic_info.first_name = data.get('first_name', basic_info.first_name)
+#             basic_info.last_name = data.get('last_name', basic_info.last_name)
+#             basic_info.job_title = data.get('job_title', basic_info.job_title)
+#             basic_info.date_of_birth = data.get('date_of_birth', basic_info.date_of_birth)
+#             basic_info.nationality = data.get('nationality', basic_info.nationality)
+#             basic_info.passport_id = data.get('passport_id', basic_info.passport_id)
+#             basic_info.gender = data.get('gender', basic_info.gender)
+#             basic_info.cv_name = data.get('cv_name', basic_info.cv_name)
+
+#             if image_data:
+#                 basic_info.image_data = image_data
+
+#             db.session.commit()
+#             return {'message': 'BasicInfo updated successfully'}, 200
+#         except IntegrityError as e:
+#             db.session.rollback()
+#             return {'message': 'An error occurred while updating BasicInfo', 'error': str(e)}, 500
+
+#     @jwt_required()  
+#     def get(self, basic_info_id):
+#         user_email = get_jwt_identity()
+#         basic_info = BasicInfo.query.filter_by(id=basic_info_id).first()
+#         if not basic_info:
+#             return {'message': 'BasicInfo not found'}, 404
+
+#         if basic_info.user_email != user_email:
+#             return {'message': 'Unauthorized'}, 401
+
+#         image_data_base64 = base64.b64encode(basic_info.image_data).decode('utf-8') if basic_info.image_data else None
+
+#         return {
+#             'user_email': basic_info.user_email,
+#             'first_name': basic_info.first_name,
+#             'last_name': basic_info.last_name,
+#             'job_title': basic_info.job_title,
+#             'date_of_birth': str(basic_info.date_of_birth),
+#             'nationality': basic_info.nationality,
+#             'passport_id': basic_info.passport_id,
+#             'gender': basic_info.gender,
+#             'cv_name': basic_info.cv_name,
+#             'image_data': image_data_base64
+#         }, 200
+
+
+
+
+#     @jwt_required()
+#     def get(self):
+#         try:
+#             user_email = get_jwt_identity()
+            
+#             basic_info = BasicInfo.query.filter_by(user_email=user_email).first()
+#             if not basic_info:
+#                 return {'message': 'BasicInfo not found'}, 404
+
+#             image_data_base64 = base64.b64encode(basic_info.image_data).decode('utf-8') if basic_info.image_data else None
+
+#             return {
+#                 'user_email': basic_info.user_email,
+#                 'first_name': basic_info.first_name,
+#                 'last_name': basic_info.last_name,
+#                 'job_title': basic_info.job_title,
+#                 'date_of_birth': str(basic_info.date_of_birth),
+#                 'nationality': basic_info.nationality,
+#                 'passport_id': basic_info.passport_id,
+#                 'gender': basic_info.gender,
+#                 'cv_name': basic_info.cv_name,
+#                 'image_data': image_data_base64
+#             }, 200
+#         except Exception as e:
+#             return {'message': 'An error occurred while fetching BasicInfo', 'error': str(e)}, 500
+
+

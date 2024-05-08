@@ -1,0 +1,298 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Job Hunter",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Auth"],
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirm_password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password", "confirm_password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "summary": "Reset password for a user",
+        "tags": ["Auth"],
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  },
+                  "confirm_password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "new_password", "confirm_password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "User with that email address does not exist"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login",
+        "tags": ["Auth"],
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Invalid email or password"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["Auth"],
+
+        "responses": {
+          "200": {
+            "description": "Logged out successfully"
+          },
+          "400": {
+            "description": "User already logged out"
+          },
+          "500": {
+            "description": "An error occurred while logging out"
+          }
+        }
+      }
+    },
+    "/delete-account": {
+      "delete": {
+        "summary": "Delete user account",
+        "tags": ["Auth"],
+
+        "responses": {
+          "200": {
+            "description": "User account deleted successfully"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "An error occurred while deleting the user account"
+          }
+        }
+      }
+    },
+    "/basic-info": {
+      "post": {
+        "summary": "Create BasicInfo",
+        "tags": ["BasicInfo"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "first_name": { "type": "string" },
+                  "last_name": { "type": "string" },
+                  "job_title": { "type": "string" },
+                  "date_of_birth": { "type": "string", "format": "date" },
+                  "nationality": { "type": "string" },
+                  "passport_id": { "type": "string" },
+                  "gender": { "type": "string" },
+                  "image_data": { "type": "string", "format": "binary" },
+                  "cv_name": { "type": "string" }
+                },
+                "required": [
+                  "first_name",
+                  "last_name",
+                  "job_title",
+                  "date_of_birth",
+                  "nationality",
+                  "passport_id",
+                  "gender",
+                  "image_data",
+                  "cv_name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "BasicInfo created successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "An error occurred while creating BasicInfo"
+          }
+        }
+      }
+    },
+    "/basic-info/{basic_info_id}": {
+      "get": {
+        "summary": "Get BasicInfo by ID",
+        "tags": ["BasicInfo"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "basic_info_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BasicInfo fetched successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "BasicInfo not found"
+          },
+          "500": {
+            "description": "An error occurred while fetching BasicInfo"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update BasicInfo",
+        "tags": ["BasicInfo"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "first_name": { "type": "string" },
+                  "last_name": { "type": "string" },
+                  "job_title": { "type": "string" },
+                  "date_of_birth": { "type": "string", "format": "date" },
+                  "nationality": { "type": "string" },
+                  "passport_id": { "type": "string" },
+                  "gender": { "type": "string" },
+                  "image_data": { "type": "string", "format": "binary" },
+                  "cv_name": { "type": "string" }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "BasicInfo updated successfully"
+            },
+            "400": {
+              "description": "Bad request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "BasicInfo not found"
+            },
+            "500": {
+              "description": "An error occurred while updating BasicInfo"
+            }
+          }
+        }
+      }
+    }
+  }
+}

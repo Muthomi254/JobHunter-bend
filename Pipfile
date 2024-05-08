@@ -11,6 +11,9 @@ psycopg2-binary = "*"
 python-dotenv = "*"
 flask-migrate = "*"
 flask-jwt-extended = "*"
+flasgger = "*"
+flask-restful = "*"
+flask-swagger-ui = "*"
 
 [dev-packages]
 
