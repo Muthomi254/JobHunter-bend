@@ -11,7 +11,6 @@ auth_blueprint = Blueprint('auth', __name__)
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    print('Data received:', data)  # Print data received
     if not data or 'email' not in data or 'password' not in data or 'confirm_password' not in data:
         return jsonify({'message': 'Email, password, and confirm password are required'}), 400
 
