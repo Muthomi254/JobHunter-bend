@@ -14,7 +14,7 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URI')  # cv_app database link (jdbc:postgresql://localhost:5432/postgres) for render('postgresql://jobhunter_user:4t0frPRG3Io18RPn6QKZdyAwAOjlzGGU@dpg-cotsrfgcmk4c73a2lbig-a.oregon-postgres.render.com/jobhunter'
 
 # Configure database URI to use SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database_name.db'  # SQLite database file
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///job_hunter.db'  # SQLite database file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['JWT_SECRET_KEY'] = config('JWT_SECRET_KEY')  # Secret key for JWT
