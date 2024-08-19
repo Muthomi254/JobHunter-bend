@@ -97,7 +97,7 @@ def get_contact(contact_id):
     user_email = get_jwt_identity()
     user = User.query.filter_by(email=user_email).first()
     if not user:
-        return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'User not found'}), 200
 
     contact = Contact.query.get(contact_id)
     if not contact:
@@ -125,7 +125,7 @@ def get_contacts():
     user_email = get_jwt_identity()
     user = User.query.filter_by(email=user_email).first()
     if not user:
-        return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'User not found'}), 200
 
     contacts = Contact.query.filter_by(user_email=user.email).all()
 

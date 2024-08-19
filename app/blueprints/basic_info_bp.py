@@ -126,7 +126,7 @@ def fetch_basic_info(basic_info_id):
     # Retrieve the basic info by ID
     basic_info = BasicInfo.query.filter_by(id=basic_info_id).first()
     if not basic_info:
-        return jsonify({'message': 'BasicInfo not found'}), 404
+        return jsonify({'message': 'BasicInfo not found', }), 200
 
     # Ensure that the user owns the basic info
     if basic_info.user_email != user_email:

@@ -11,9 +11,12 @@ from flask_cors import CORS  # Import CORS
 app = Flask(__name__)
 
 # Configure database URI from environment variable
-app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URI')  # cv_app database link (jdbc:postgresql://localhost:5432/postgres) for render('postgresql://jobhunter_user:4t0frPRG3Io18RPn6QKZdyAwAOjlzGGU@dpg-cotsrfgcmk4c73a2lbig-a.oregon-postgres.render.com/jobhunter'
+# app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URI')  # cv_app database link (jdbc:postgresql://localhost:5432/postgres) for render('postgresql://jobhunter_user:4t0frPRG3Io18RPn6QKZdyAwAOjlzGGU@dpg-cotsrfgcmk4c73a2lbig-a.oregon-postgres.render.com/jobhunter'
 
+# Configure database URI to use SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database_name.db'  # SQLite database file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 app.config['JWT_SECRET_KEY'] = config('JWT_SECRET_KEY')  # Secret key for JWT
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 24 * 3600  # Set expiration time to 1 day (24 hours) in seconds
 
